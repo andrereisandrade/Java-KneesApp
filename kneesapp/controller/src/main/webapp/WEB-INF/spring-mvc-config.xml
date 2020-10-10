@@ -1,0 +1,52 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans     
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/mvc 
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context.xsd 
+        http://www.springframework.org/schema/websocket
+        http://www.springframework.org/schema/websocket/spring-websocket.xsd">
+ 
+    <context:component-scan base-package="br.com.kneesapp.web.api" />
+ 
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <property name="prefix" value="/WEB-INF/views/" />
+        <property name="suffix" value=".jsp" />
+    </bean>
+    
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="10000000"/>
+    </bean>
+
+    <mvc:resources mapping="/resources/**" location="/resources/" />
+       
+    <mvc:annotation-driven>
+        <mvc:message-converters>
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter"/>
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+    
+    <mvc:cors>
+
+        <mvc:mapping path="/*"
+                     allowed-origins="*"
+                     allowed-methods="GET, PUT, POST, DELETE, OPTIONS"
+                     allowed-headers="Content-Type, accept, X-Requested-With, Origin, Access-Control-Request-Method, Access-Control-Request-Headers"
+                     exposed-headers="Access-Control-Allow-Origin, Access-Control-Allow-Credentials" 
+                     allow-credentials="true"
+                     max-age="3600" />
+    </mvc:cors>
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <bean class="br.com.kneesapp.web.api.security.JSecurityInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+</beans>
